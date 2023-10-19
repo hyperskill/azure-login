@@ -1,0 +1,41 @@
+name: 'Login to Azure'
+description: 'Install azure cli and login to Azure'
+
+inputs:
+  client_id:
+    required: true
+    description: Azure client id
+  client_secret:
+    required: true
+    description: Azure client secret
+  subscription_id:
+    required: true
+    description: Azure subscription id
+  tenant_id:
+    required: true
+    description: Azure tenant id
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Azure cli
+      run: |
+        sudo apt-get install -y \
+          ca-certificates \
+          curl \
+          apt-transport-https \
+          lsb-release \
+          gnupg \
+          software-properties-common
+        curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+        AZ_REPO=$(lsb_release -cs)
+        echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+        sudo apt-get update
+        sudo apt-get install -y \
+          azure-cli
+      shell: bash
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: '{"clientId":"${{ inputs.client_id }}","clientSecret":"${{ inputs.client_secret }}","subscriptionId":"${{ inputs.subscription_id }}","tenantId":"${{ inputs.tenant_id }}"}'
