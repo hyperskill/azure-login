@@ -19,6 +19,6 @@ runs:
   using: "composite"
   steps:
     - name: Azure Login
-      uses: azure/login@v2
+      uses: azure/login@v3
       with:
         creds: '{"clientId":"${{ inputs.client_id }}","clientSecret":"${{ inputs.client_secret }}","subscriptionId":"${{ inputs.subscription_id }}","tenantId":"${{ inputs.tenant_id }}"}'
